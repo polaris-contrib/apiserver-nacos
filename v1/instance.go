@@ -27,8 +27,8 @@ import (
 	apimodel "github.com/polarismesh/specification/source/go/api/v1/model"
 	apiservice "github.com/polarismesh/specification/source/go/api/v1/service_manage"
 
-	"github.com/pole-group/nacosserver/core"
-	"github.com/pole-group/nacosserver/model"
+	"github.com/pole-group/polaris-apiserver-nacos/core"
+	"github.com/pole-group/polaris-apiserver-nacos/model"
 )
 
 func (n *NacosV1Server) handleRegister(ctx context.Context, namespace, serviceName string, ins *model.Instance) error {

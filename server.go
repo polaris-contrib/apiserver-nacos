@@ -29,10 +29,10 @@ import (
 	"github.com/polarismesh/polaris/service"
 	"github.com/polarismesh/polaris/service/healthcheck"
 
-	"github.com/pole-group/nacosserver/core"
-	"github.com/pole-group/nacosserver/core/push"
-	nacosv1 "github.com/pole-group/nacosserver/v1"
-	nacosv2 "github.com/pole-group/nacosserver/v2"
+	"github.com/pole-group/polaris-apiserver-nacos/core"
+	"github.com/pole-group/polaris-apiserver-nacos/core/push"
+	nacosv1 "github.com/pole-group/polaris-apiserver-nacos/v1"
+	nacosv2 "github.com/pole-group/polaris-apiserver-nacos/v2"
 )
 
 const (

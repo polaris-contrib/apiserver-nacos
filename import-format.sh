@@ -37,5 +37,5 @@ cd ../
 go fmt ./...
 
 find . -name "*.go" -type f | grep -v .pb.go|grep -v test/tools/tools.go | grep -v ./plugin.go |\
-xargs -I {} ./goimports-reviser -rm-unused -format {} -local github.com/polarismesh/specification -project-name github.com/pole-group/nacosserver
+xargs -I {} ./goimports-reviser -rm-unused -format {} -local github.com/polarismesh/specification -project-name github.com/pole-group/polaris-apiserver-nacos
 

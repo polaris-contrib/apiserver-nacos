@@ -34,7 +34,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/stats"
 
-	nacospb "github.com/pole-group/nacosserver/v2/pb"
+	nacospb "github.com/pole-group/polaris-apiserver-nacos/v2/pb"
 )
 
 type (

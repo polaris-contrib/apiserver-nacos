@@ -41,7 +41,7 @@ fi
 cat ../plugin.go.temp >nacos_server_plugin.go
 
 go clean --modcache
-go get -u github.com/pole-group/nacosserver@${nacos_server_plugin_version}
+go get -u github.com/pole-group/polaris-apiserver-nacos@${nacos_server_plugin_version}
 go mod tidy
 
 make build VERSION=${polaris_server_tag}

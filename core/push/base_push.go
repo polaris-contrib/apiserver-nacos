@@ -27,8 +27,8 @@ import (
 	"github.com/polarismesh/polaris/common/utils"
 	"go.uber.org/zap"
 
-	"github.com/pole-group/nacosserver/core"
-	nacosmodel "github.com/pole-group/nacosserver/model"
+	"github.com/pole-group/polaris-apiserver-nacos/core"
+	nacosmodel "github.com/pole-group/polaris-apiserver-nacos/model"
 )
 
 type (

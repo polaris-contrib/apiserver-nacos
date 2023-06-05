@@ -20,7 +20,7 @@ package v2
 import (
 	"context"
 
-	nacospb "github.com/pole-group/nacosserver/v2/pb"
+	nacospb "github.com/pole-group/polaris-apiserver-nacos/v2/pb"
 )
 
 func (h *NacosV2Server) handleServerCheckRequest(ctx context.Context, req nacospb.BaseRequest,

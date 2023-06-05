@@ -26,7 +26,7 @@ import (
 
 	"github.com/emicklei/go-restful/v3"
 
-	"github.com/pole-group/nacosserver/model"
+	"github.com/pole-group/polaris-apiserver-nacos/model"
 )
 
 func BuildInstance(namespace string, req *restful.Request) (*model.Instance, error) {

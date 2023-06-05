@@ -24,9 +24,9 @@ import (
 	"github.com/polarismesh/polaris/common/utils"
 	"go.uber.org/zap"
 
-	"github.com/pole-group/nacosserver/core"
-	nacosmodel "github.com/pole-group/nacosserver/model"
-	nacospb "github.com/pole-group/nacosserver/v2/pb"
+	"github.com/pole-group/polaris-apiserver-nacos/core"
+	nacosmodel "github.com/pole-group/polaris-apiserver-nacos/model"
+	nacospb "github.com/pole-group/polaris-apiserver-nacos/v2/pb"
 )
 
 func (h *NacosV2Server) handleSubscribeServiceReques(ctx context.Context, req nacospb.BaseRequest,

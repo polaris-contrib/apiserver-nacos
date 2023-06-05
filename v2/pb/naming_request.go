@@ -22,7 +22,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/pole-group/nacosserver/model"
+	"github.com/pole-group/polaris-apiserver-nacos/model"
 )
 
 // NamingRequest

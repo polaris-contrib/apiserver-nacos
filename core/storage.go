@@ -31,7 +31,7 @@ import (
 	"go.uber.org/zap"
 	"golang.org/x/sync/singleflight"
 
-	nacosmodel "github.com/pole-group/nacosserver/model"
+	nacosmodel "github.com/pole-group/polaris-apiserver-nacos/model"
 )
 
 type (

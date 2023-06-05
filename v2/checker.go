@@ -33,7 +33,7 @@ import (
 	"github.com/polarismesh/specification/source/go/api/v1/service_manage"
 	"go.uber.org/zap"
 
-	nacosmodel "github.com/pole-group/nacosserver/model"
+	nacosmodel "github.com/pole-group/polaris-apiserver-nacos/model"
 )
 
 type Checker struct {

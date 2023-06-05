@@ -20,7 +20,7 @@ package nacos_grpc_service
 import (
 	"encoding/json"
 
-	"github.com/pole-group/nacosserver/model"
+	"github.com/pole-group/polaris-apiserver-nacos/model"
 )
 
 // BaseResponse

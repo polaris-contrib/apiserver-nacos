@@ -18,7 +18,7 @@
 package push
 
 import (
-	"github.com/pole-group/nacosserver/core/logger"
+	"github.com/pole-group/polaris-apiserver-nacos/core/logger"
 )
 
 var (

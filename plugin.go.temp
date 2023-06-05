@@ -18,5 +18,5 @@
 package main
 
 import (
-	_ "github.com/pole-group/nacosserver"
+	_ "github.com/pole-group/polaris-apiserver-nacos"
 )

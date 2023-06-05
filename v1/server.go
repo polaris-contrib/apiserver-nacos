@@ -42,8 +42,8 @@ import (
 	apimodel "github.com/polarismesh/specification/source/go/api/v1/model"
 	"go.uber.org/zap"
 
-	"github.com/pole-group/nacosserver/core"
-	"github.com/pole-group/nacosserver/model"
+	"github.com/pole-group/polaris-apiserver-nacos/core"
+	"github.com/pole-group/polaris-apiserver-nacos/model"
 )
 
 func NewNacosV1Server(pushCenter core.PushCenter, store *core.NacosDataStorage,

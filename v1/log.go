@@ -17,7 +17,7 @@
 
 package v1
 
-import "github.com/pole-group/polaris-apiserver-nacos/core/logger"
+import "github.com/pole-group/polaris-apiserver-nacos/logger"
 
 var (
 	nacoslog = logger.GetNacosLog()

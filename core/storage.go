@@ -28,6 +28,7 @@ import (
 	"github.com/polarismesh/polaris/cache"
 	"github.com/polarismesh/polaris/common/eventhub"
 	"github.com/polarismesh/polaris/common/model"
+	commontime "github.com/polarismesh/polaris/common/time"
 	"go.uber.org/zap"
 	"golang.org/x/sync/singleflight"
 
@@ -119,11 +120,13 @@ func (n *NacosDataStorage) ListInstances(filterCtx *FilterContext, filter Instan
 	defer svcInfo.lock.RUnlock()
 
 	resultInfo := &nacosmodel.ServiceInfo{
+		Namespace:                svc.Namespace,
 		CacheMillis:              1000,
 		Name:                     svc.Name,
 		GroupName:                svc.Group,
 		Clusters:                 strings.Join(clusters, ","),
 		Checksum:                 svcInfo.reversion,
+		LastRefTime:              commontime.CurrentMillisecond(),
 		ReachProtectionThreshold: false,
 	}
 

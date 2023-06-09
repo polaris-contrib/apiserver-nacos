@@ -45,7 +45,6 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/pole-group/polaris-apiserver-nacos/core"
-	"github.com/pole-group/polaris-apiserver-nacos/core/push"
 	v1 "github.com/pole-group/polaris-apiserver-nacos/v1"
 	nacospb "github.com/pole-group/polaris-apiserver-nacos/v2/pb"
 )
@@ -135,7 +134,7 @@ func (h *NacosV2Server) Initialize(ctx context.Context, option map[string]interf
 		nacoslog.Infof("[API-Server] %s server open the ratelimit", h.protocol)
 		h.ratelimit = ratelimit
 	}
-	grpcPush, err := push.NewGrpcPushCenter(h.store, h.sendPushData)
+	grpcPush, err := NewGrpcPushCenter(h.store, h.sendPushData)
 	if err != nil {
 		return err
 	}

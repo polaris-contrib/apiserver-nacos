@@ -15,7 +15,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package push
+package v1
 
 import (
 	"encoding/json"
@@ -24,6 +24,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/polarismesh/polaris/common/log"
 	commontime "github.com/polarismesh/polaris/common/time"
 	"go.uber.org/zap"
 
@@ -37,7 +38,7 @@ func NewUDPPushCenter(store *core.NacosDataStorage) (core.PushCenter, error) {
 		return nil, err
 	}
 	pushCenter := &UdpPushCenter{
-		BasePushCenter: newBasePushCenter(store),
+		BasePushCenter: core.NewBasePushCenter(store),
 		udpLn:          ln,
 		srcAddr:        ln.LocalAddr().(*net.UDPAddr),
 	}
@@ -46,7 +47,7 @@ func NewUDPPushCenter(store *core.NacosDataStorage) (core.PushCenter, error) {
 }
 
 type UdpPushCenter struct {
-	*BasePushCenter
+	*core.BasePushCenter
 	lock    sync.RWMutex
 	udpLn   *net.UDPConn
 	srcAddr *net.UDPAddr
@@ -54,18 +55,18 @@ type UdpPushCenter struct {
 
 func (p *UdpPushCenter) AddSubscriber(s core.Subscriber) {
 	notifier := newUDPNotifier(s, p.srcAddr)
-	if ok := p.addSubscriber(s, notifier); !ok {
+	if ok := p.BasePushCenter.AddSubscriber(s, notifier); !ok {
 		_ = notifier.Close()
 		return
 	}
-	client := p.getSubscriber(s)
+	client := p.BasePushCenter.GetSubscriber(s)
 	if client != nil {
-		client.lastRefreshTime = commontime.CurrentMillisecond()
+		client.RefreshLastTime()
 	}
 }
 
 func (p *UdpPushCenter) RemoveSubscriber(s core.Subscriber) {
-	p.removeSubscriber(s)
+	p.BasePushCenter.RemoveSubscriber(s)
 }
 
 func (p *UdpPushCenter) EnablePush(s core.Subscriber) bool {
@@ -77,25 +78,16 @@ func (p *UdpPushCenter) Type() core.PushType {
 }
 
 func (p *UdpPushCenter) cleanZombieClient() {
-	pc := p.BasePushCenter
-	cleanFunc := func() {
-		pc.lock.Lock()
-		defer pc.lock.Unlock()
-
-		for i := range pc.clients {
-			client := pc.clients[i]
-			if !client.notifier.IsZombie() {
-				continue
-			}
-			sub := client.subscriber
-			log.Info("[NACOS-V2][PushCenter] remove zombie udp subscriber", zap.Any("info", sub))
-			pc.removeSubscriber0(sub)
-		}
-	}
-
 	ticker := time.NewTicker(time.Minute)
 	for range ticker.C {
-		cleanFunc()
+		p.BasePushCenter.RemoveClientIf(func(s string, client *core.WatchClient) bool {
+			if !client.IsZombie() {
+				return false
+			}
+			sub := client.GetSubscriber()
+			log.Info("[NACOS-V2][PushCenter] remove zombie udp subscriber", zap.Any("info", sub))
+			return true
+		})
 	}
 }
 

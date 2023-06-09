@@ -44,17 +44,17 @@ func (h *NacosV2Server) handleInstanceRequest(ctx context.Context, req nacospb.B
 	if len(insReq.Namespace) != 0 {
 		namespace = insReq.Namespace
 	}
+	namespace = nacosmodel.ToPolarisNamespace(namespace)
 	svcName := nacosmodel.BuildServiceName(insReq.ServiceName, insReq.GroupName)
 	ins := nacosmodel.PrepareSpecInstance(namespace, svcName, &insReq.Instance)
+	// 设置连接 ID 作为实例的 metadata 属性信息
 	ins.Metadata[nacosmodel.InternalNacosClientConnectionID] = ValueConnID(ctx)
 
 	// 显示关闭实例的健康检查能力
 	ins.EnableHealthCheck = wrapperspb.Bool(false)
 	ins.HealthCheck = nil
 
-	var (
-		resp *service_manage.Response
-	)
+	var resp *service_manage.Response
 
 	switch insReq.Type {
 	case "registerInstance":
@@ -109,6 +109,7 @@ func (h *NacosV2Server) handleBatchInstanceRequest(ctx context.Context, req naco
 	if len(batchInsReq.Namespace) != 0 {
 		namespace = batchInsReq.Namespace
 	}
+	namespace = nacosmodel.ToPolarisNamespace(namespace)
 	var (
 		svcName   = nacosmodel.BuildServiceName(batchInsReq.ServiceName, batchInsReq.GroupName)
 		batchResp = api.NewBatchWriteResponse(apimodel.Code_ExecuteSuccess)

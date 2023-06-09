@@ -20,10 +20,19 @@ package core
 import (
 	"bytes"
 	"compress/gzip"
+	"context"
 	"encoding/json"
+	"io"
+	"sync"
+	"sync/atomic"
 	"time"
 
+	"github.com/polarismesh/polaris/common/eventhub"
+	"github.com/polarismesh/polaris/common/log"
 	"github.com/polarismesh/polaris/common/model"
+	commontime "github.com/polarismesh/polaris/common/time"
+	"github.com/polarismesh/polaris/common/utils"
+	"go.uber.org/zap"
 
 	nacosmodel "github.com/pole-group/polaris-apiserver-nacos/model"
 )
@@ -124,4 +133,206 @@ type Subscriber struct {
 	Service     string
 	Cluster     string
 	Type        PushType
+}
+
+type (
+	Notifier interface {
+		io.Closer
+		Notify(d *PushData) error
+		IsZombie() bool
+	}
+
+	WatchClient struct {
+		subscriber         Subscriber
+		notifier           Notifier
+		lastRefreshTimeRef atomic.Int64
+		lastCheclksum      string
+	}
+)
+
+func (w *WatchClient) RefreshLastTime() {
+	w.lastRefreshTimeRef.Store(commontime.CurrentMillisecond())
+}
+
+func (w *WatchClient) IsZombie() bool {
+	return w.notifier.IsZombie()
+}
+
+func (w *WatchClient) GetSubscriber() Subscriber {
+	return w.subscriber
+}
+
+type BasePushCenter struct {
+	lock sync.RWMutex
+
+	store *NacosDataStorage
+
+	clients map[string]*WatchClient
+	// notifiers namespace -> service -> notifiers
+	notifiers map[string]map[nacosmodel.ServiceKey]map[string]*WatchClient
+}
+
+func NewBasePushCenter(store *NacosDataStorage) *BasePushCenter {
+	pc := &BasePushCenter{
+		store:     store,
+		clients:   map[string]*WatchClient{},
+		notifiers: map[string]map[nacosmodel.ServiceKey]map[string]*WatchClient{},
+	}
+	_ = eventhub.Subscribe(nacosmodel.NacosServicesChangeEventTopic, utils.NewUUID(), pc)
+	return pc
+}
+
+// RemoveClientIf .
+func (pc *BasePushCenter) RemoveClientIf(test func(string, *WatchClient) bool) {
+	pc.lock.Lock()
+	defer pc.lock.Unlock()
+
+	for i := range pc.clients {
+		client := pc.clients[i]
+		if test(i, client) {
+			pc.removeSubscriber0(client.subscriber)
+		}
+	}
+}
+
+// PreProcess do preprocess logic for event
+func (pc *BasePushCenter) PreProcess(_ context.Context, any any) any {
+	return any
+}
+
+// OnEvent event process logic
+func (pc *BasePushCenter) OnEvent(ctx context.Context, any2 any) error {
+	event, ok := any2.(*nacosmodel.NacosServicesChangeEvent)
+	if !ok {
+		log.Error("[NACOS-CORE][PushCenter] receive event type not NacosServicesChangeEvent")
+		return nil
+	}
+	for i := range event.Services {
+		svc := event.Services[i]
+		svcName := nacosmodel.GetServiceName(svc.Name)
+		groupName := nacosmodel.GetGroupName(svc.Name)
+		filterCtx := &FilterContext{
+			Service:    ToNacosService(pc.store.Cache(), svc.Namespace, svcName, groupName),
+			EnableOnly: true,
+		}
+		svcInfo := pc.store.ListInstances(filterCtx, NoopSelectInstances)
+		pushData := &PushData{
+			Service: &model.Service{
+				ID:        svc.ID,
+				Name:      svc.Name,
+				Namespace: svc.Namespace,
+				Meta:      svc.Meta,
+			},
+			ServiceInfo: svcInfo,
+		}
+		log.Info("[NACOS-CORE][PushCenter] notify subscriber data", zap.Any("pushData", pushData))
+		// WarpGRPCPushData(pushData) // 目前根本不会使用这个数据
+		WarpUDPPushData(pushData)
+		svcKey := nacosmodel.ServiceKey{Namespace: svc.Namespace, Group: groupName, Name: svcName}
+		pc.NotifyClients(svcKey, func(client *WatchClient) {
+			if err := client.notifier.Notify(pushData); err != nil {
+				log.Error("[NACOS-CORE][PushCenter] notify client fail", zap.String("ip", client.subscriber.Ip),
+					zap.String("conn-id", client.subscriber.ConnID),
+					zap.String("type", string(client.subscriber.Type)), zap.Error(err))
+			}
+		})
+	}
+	return nil
+}
+
+func (pc *BasePushCenter) GetSubscriber(s Subscriber) *WatchClient {
+	pc.lock.RLock()
+	defer pc.lock.RUnlock()
+
+	id := s.Key
+	val := pc.clients[id]
+	return val
+}
+
+func (pc *BasePushCenter) AddSubscriber(s Subscriber, notifier Notifier) bool {
+	pc.lock.Lock()
+	defer pc.lock.Unlock()
+
+	id := s.Key
+	if _, ok := pc.clients[id]; ok {
+		return false
+	}
+
+	key := nacosmodel.ServiceKey{
+		Namespace: s.NamespaceId,
+		Group:     s.Group,
+		Name:      s.Service,
+	}
+
+	client := &WatchClient{
+		subscriber: s,
+		notifier:   notifier,
+	}
+	pc.clients[id] = client
+
+	if _, ok := pc.notifiers[s.NamespaceId]; !ok {
+		pc.notifiers[s.NamespaceId] = map[nacosmodel.ServiceKey]map[string]*WatchClient{}
+	}
+	if _, ok := pc.notifiers[s.NamespaceId][key]; !ok {
+		pc.notifiers[s.NamespaceId][key] = map[string]*WatchClient{}
+	}
+	_, ok := pc.notifiers[s.NamespaceId][key][id]
+	if !ok {
+		pc.notifiers[s.NamespaceId][key][id] = client
+	}
+	return true
+}
+
+func (pc *BasePushCenter) RemoveSubscriber(s Subscriber) {
+	pc.lock.Lock()
+	defer pc.lock.Unlock()
+	pc.removeSubscriber0(s)
+}
+
+func (pc *BasePushCenter) removeSubscriber0(s Subscriber) {
+	id := s.Key
+	if _, ok := pc.clients[id]; !ok {
+		return
+	}
+
+	key := nacosmodel.ServiceKey{
+		Namespace: s.NamespaceId,
+		Group:     s.Group,
+		Name:      s.Service,
+	}
+
+	if _, ok := pc.notifiers[s.NamespaceId]; ok {
+		if _, ok = pc.notifiers[s.NamespaceId][key]; ok {
+			if _, ok = pc.notifiers[s.NamespaceId][key][id]; ok {
+				notifiers := pc.notifiers[s.NamespaceId][key]
+				delete(notifiers, id)
+				pc.notifiers[s.NamespaceId][key] = notifiers
+			}
+		}
+	}
+
+	if notifier, ok := pc.clients[id]; ok {
+		_ = notifier.notifier.Close()
+	}
+	delete(pc.clients, id)
+}
+
+func (pc *BasePushCenter) NotifyClients(key nacosmodel.ServiceKey, notify func(client *WatchClient)) {
+	pc.lock.RLock()
+	defer pc.lock.RUnlock()
+
+	ns, ok := pc.notifiers[key.Namespace]
+	if !ok {
+		return
+	}
+	clients, ok := ns[key]
+	if !ok {
+		return
+	}
+
+	log.Info("[NACOS-CORE][PushCenter] receive nacos services change", zap.String("namespace", key.Namespace),
+		zap.String("group", key.Group), zap.String("service", key.Name), zap.Int("client-count", len(clients)))
+	for i := range clients {
+		notify(clients[i])
+	}
 }

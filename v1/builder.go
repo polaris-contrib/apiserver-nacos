@@ -100,6 +100,7 @@ func BuildClientBeat(req *restful.Request) (*model.ClientBeat, error) {
 	}
 
 	namespace := optional(req, model.ParamNamespaceID, model.DefaultNacosNamespace)
+	namespace = model.ToPolarisNamespace(namespace)
 	service, err := required(req, model.ParamServiceName)
 	if err != nil {
 		return nil, err

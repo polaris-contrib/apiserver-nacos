@@ -35,7 +35,7 @@ func (h *NacosV2Server) handleSubscribeServiceReques(ctx context.Context, req na
 	if !ok {
 		return nil, ErrorInvalidRequestBodyType
 	}
-	namespace := subReq.Namespace
+	namespace := nacosmodel.ToPolarisNamespace(subReq.Namespace)
 	service := subReq.ServiceName
 	group := subReq.GroupName
 	nacoslog.Info("[NACOS-V2][Instance] subscribe service request", zap.String("namespace", namespace),
@@ -90,12 +90,12 @@ func (h *NacosV2Server) sendPushData(sub core.Subscriber, data *core.PushData) e
 			zap.String("conn-id", sub.ConnID))
 		return nil
 	}
+	namespace := nacosmodel.ToPolarisNamespace(data.ServiceInfo.Namespace)
 	watcher := sub
 	svr := stream
 	req := &nacospb.NotifySubscriberRequest{
-		NamingRequest: nacospb.NewNamingRequest(data.ServiceInfo.Namespace,
-			data.ServiceInfo.Name, data.ServiceInfo.GroupName),
-		ServiceInfo: data.ServiceInfo,
+		NamingRequest: nacospb.NewNamingRequest(namespace, data.ServiceInfo.Name, data.ServiceInfo.GroupName),
+		ServiceInfo:   data.ServiceInfo,
 	}
 	req.RequestId = utils.NewUUID()
 	nacoslog.Info("[NACOS-V2][PushCenter] notify subscriber new service info", zap.String("conn-id", watcher.ConnID),

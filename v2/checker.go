@@ -56,6 +56,7 @@ const (
 	eventhubSubscriberName = "nacos-v2-checker"
 )
 
+// newChecker 创建 nacos 长连接和实例信息绑定关系的健康检查，如果长连接不存在，则该连接上绑定的实例信息将失效
 func newChecker(discoverSvr service.DiscoverServer, connectionMgr *ConnectionManager,
 	clientMgr *ConnectionClientManager) *Checker {
 

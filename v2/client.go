@@ -23,6 +23,7 @@ import (
 	nacospb "github.com/pole-group/polaris-apiserver-nacos/v2/pb"
 )
 
+// handleServerCheckRequest 客户端首次发起请求，用于向 server 获取当前长连接的 ID 信息
 func (h *NacosV2Server) handleServerCheckRequest(ctx context.Context, req nacospb.BaseRequest,
 	meta nacospb.RequestMeta) (nacospb.BaseResponse, error) {
 	if _, ok := req.(*nacospb.ServerCheckRequest); !ok {

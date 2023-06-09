@@ -45,7 +45,6 @@ func (n *NacosV1Server) handleRegister(ctx context.Context, namespace, serviceNa
 
 func (n *NacosV1Server) handleDeregister(ctx context.Context, namespace, service string, ins *model.Instance) error {
 	specIns := model.PrepareSpecInstance(namespace, service, ins)
-
 	resp := n.discoverSvr.DeregisterInstance(ctx, specIns)
 	if apimodel.Code(resp.GetCode().GetValue()) != apimodel.Code_ExecuteSuccess {
 		return &model.NacosError{
@@ -131,8 +130,8 @@ func (n *NacosV1Server) handleQueryInstances(ctx context.Context, params map[str
 	}
 	// 默认只下发 enable 的实例
 	result := n.store.ListInstances(filterCtx, core.SelectInstancesWithHealthyProtection)
-
 	// adapt for nacos v1.x SDK
 	result.Name = fmt.Sprintf("%s%s%s", result.GroupName, model.DefaultNacosGroupConnectStr, result.Name)
+	result.Namespace = model.ToNacosNamespace(namespace)
 	return result, nil
 }

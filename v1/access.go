@@ -74,6 +74,7 @@ func (n *NacosV1Server) RegisterInstance(req *restful.Request, rsp *restful.Resp
 	}
 
 	namespace := optional(req, model.ParamNamespaceID, model.DefaultNacosNamespace)
+	namespace = model.ToPolarisNamespace(namespace)
 	ins, err := BuildInstance(namespace, req)
 	if err != nil {
 		core.WrirteNacosErrorResponse(err, rsp)
@@ -95,6 +96,7 @@ func (n *NacosV1Server) DeRegisterInstance(req *restful.Request, rsp *restful.Re
 	}
 
 	namespace := optional(req, model.ParamNamespaceID, model.DefaultNacosNamespace)
+	namespace = model.ToPolarisNamespace(namespace)
 	ins, err := BuildInstance(namespace, req)
 	if err != nil {
 		core.WrirteNacosErrorResponse(err, rsp)
@@ -137,6 +139,9 @@ func (n *NacosV1Server) ListInstances(req *restful.Request, rsp *restful.Respons
 	}
 
 	ctx := handler.ParseHeaderContext()
+	params := ParseQueryParams(req)
+
+	params[model.ParamNamespaceID] = model.ToPolarisNamespace(params[model.ParamNamespaceID])
 	data, err := n.handleQueryInstances(ctx, ParseQueryParams(req))
 	if err != nil {
 		core.WrirteNacosErrorResponse(err, rsp)

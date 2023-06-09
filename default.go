@@ -20,7 +20,6 @@ package nacosserver
 import (
 	"github.com/polarismesh/polaris/apiserver"
 
-	_ "github.com/pole-group/polaris-apiserver-nacos/core/push"
 	_ "github.com/pole-group/polaris-apiserver-nacos/v2"
 )
 

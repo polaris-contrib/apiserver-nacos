@@ -30,7 +30,6 @@ import (
 	"github.com/polarismesh/polaris/service/healthcheck"
 
 	"github.com/pole-group/polaris-apiserver-nacos/core"
-	"github.com/pole-group/polaris-apiserver-nacos/core/push"
 	nacosv1 "github.com/pole-group/polaris-apiserver-nacos/v1"
 	nacosv2 "github.com/pole-group/polaris-apiserver-nacos/v2"
 )
@@ -182,11 +181,7 @@ func (n *NacosServer) prepareRun() error {
 		return err
 	}
 	n.store = core.NewNacosDataStorage(n.discoverSvr.Cache())
-	udpPush, err := push.NewUDPPushCenter(n.store)
-	if err != nil {
-		return err
-	}
-	n.v1Svr = nacosv1.NewNacosV1Server(udpPush, n.store,
+	n.v1Svr = nacosv1.NewNacosV1Server(n.store,
 		nacosv1.WithConnLimitConfig(n.connLimitConfig),
 		nacosv1.WithTLS(n.tlsInfo),
 		nacosv1.WithNamespaceSvr(n.namespaceSvr),

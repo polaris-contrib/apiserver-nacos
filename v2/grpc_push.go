@@ -15,11 +15,12 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package push
+package v2
 
 import (
 	"sync"
 
+	"github.com/polarismesh/polaris/common/log"
 	commontime "github.com/polarismesh/polaris/common/time"
 	"go.uber.org/zap"
 
@@ -29,13 +30,13 @@ import (
 type Sender func(sub core.Subscriber, data *core.PushData) error
 
 type GrpcPushCenter struct {
-	*BasePushCenter
+	*core.BasePushCenter
 	sender Sender
 }
 
 func NewGrpcPushCenter(store *core.NacosDataStorage, sender Sender) (core.PushCenter, error) {
 	return &GrpcPushCenter{
-		BasePushCenter: newBasePushCenter(store),
+		BasePushCenter: core.NewBasePushCenter(store),
 		sender:         sender,
 	}, nil
 }
@@ -45,22 +46,22 @@ func (p *GrpcPushCenter) AddSubscriber(s core.Subscriber) {
 		subscriber: s,
 		sender:     p.sender,
 	}
-	if ok := p.addSubscriber(s, notifier); !ok {
+	if ok := p.BasePushCenter.AddSubscriber(s, notifier); !ok {
 		_ = notifier.Close()
 		return
 	}
 	log.Info("[NACOS-V2][PushCenter] add subscriber", zap.String("type", string(p.Type())),
 		zap.String("conn-id", s.ConnID))
-	client := p.getSubscriber(s)
+	client := p.BasePushCenter.GetSubscriber(s)
 	if client != nil {
-		client.lastRefreshTime = commontime.CurrentMillisecond()
+		client.RefreshLastTime()
 	}
 }
 
 func (p *GrpcPushCenter) RemoveSubscriber(s core.Subscriber) {
 	log.Info("[NACOS-V2][PushCenter] remove subscriber", zap.String("type", string(p.Type())),
 		zap.String("conn-id", s.ConnID))
-	p.removeSubscriber(s)
+	p.BasePushCenter.RemoveSubscriber(s)
 }
 
 func (p *GrpcPushCenter) EnablePush(s core.Subscriber) bool {

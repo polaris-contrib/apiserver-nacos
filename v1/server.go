@@ -46,11 +46,9 @@ import (
 	"github.com/pole-group/polaris-apiserver-nacos/model"
 )
 
-func NewNacosV1Server(pushCenter core.PushCenter, store *core.NacosDataStorage,
-	options ...option) *NacosV1Server {
+func NewNacosV1Server(store *core.NacosDataStorage, options ...option) *NacosV1Server {
 	svr := &NacosV1Server{
-		pushCenter: pushCenter,
-		store:      store,
+		store: store,
 	}
 
 	for i := range options {
@@ -100,6 +98,12 @@ func (h *NacosV1Server) Initialize(_ context.Context, option map[string]interfac
 		log.Infof("nacos http server open the ratelimit")
 		h.rateLimit = rateLimit
 	}
+
+	udpPush, err := NewUDPPushCenter(h.store)
+	if err != nil {
+		return err
+	}
+	h.pushCenter = udpPush
 
 	if whitelist := plugin.GetWhitelist(); whitelist != nil {
 		log.Infof("nacos http server open the whitelist")

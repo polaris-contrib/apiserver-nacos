@@ -22,6 +22,7 @@ import (
 	"strings"
 
 	"github.com/pole-group/polaris-apiserver-nacos/model"
+	nacosmodel "github.com/pole-group/polaris-apiserver-nacos/model"
 	nacospb "github.com/pole-group/polaris-apiserver-nacos/v2/pb"
 )
 
@@ -41,7 +42,8 @@ func (h *NacosV2Server) handleServiceListRequest(ctx context.Context, req nacosp
 		ServiceNames: []string{},
 	}
 
-	_, services := h.discoverSvr.Cache().Service().ListServices(svcListReq.Namespace)
+	namespace := nacosmodel.ToPolarisNamespace(svcListReq.Namespace)
+	_, services := h.discoverSvr.Cache().Service().ListServices(namespace)
 	offset := (svcListReq.PageNo - 1) * svcListReq.PageSize
 	limit := svcListReq.PageSize
 	if offset < 0 {

@@ -57,6 +57,7 @@ type ServiceInfo struct {
 	ReachProtectionThreshold bool        `json:"reachProtectionThreshold"`
 }
 
+// NewEmptyServiceInfo .
 func NewEmptyServiceInfo(name, group string) *ServiceInfo {
 	return &ServiceInfo{
 		Name:      name,

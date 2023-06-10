@@ -24,7 +24,7 @@ import (
 	commontime "github.com/polarismesh/polaris/common/time"
 	"go.uber.org/zap"
 
-	"github.com/pole-group/polaris-apiserver-nacos/core"
+	"github.com/polaris-contrib/apiserver-nacos/core"
 )
 
 type Sender func(sub core.Subscriber, data *core.PushData) error

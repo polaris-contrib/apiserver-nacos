@@ -38,10 +38,10 @@ if [ "${polaris_server_tag}" != "" ]; then
     git checkout ${polaris_server_tag}
 fi
 
-cat ../plugin.go.temp >nacos_server_plugin.go
+cat ../plugin_apiserver_nacos.go.temp >plugin_apiserver_nacos.go
 
 go clean --modcache
-go get -u github.com/pole-group/polaris-apiserver-nacos@${nacos_server_plugin_version}
+go get -u github.com/polaris-contrib/apiserver-nacos@${nacos_server_plugin_version}
 go mod tidy
 
 make build VERSION=${polaris_server_tag}

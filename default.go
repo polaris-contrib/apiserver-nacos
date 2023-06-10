@@ -20,7 +20,7 @@ package nacosserver
 import (
 	"github.com/polarismesh/polaris/apiserver"
 
-	_ "github.com/pole-group/polaris-apiserver-nacos/v2"
+	_ "github.com/polaris-contrib/apiserver-nacos/v2"
 )
 
 // init 自注册到API服务器插槽

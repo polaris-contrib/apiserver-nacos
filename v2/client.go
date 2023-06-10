@@ -20,7 +20,7 @@ package v2
 import (
 	"context"
 
-	nacospb "github.com/pole-group/polaris-apiserver-nacos/v2/pb"
+	nacospb "github.com/polaris-contrib/apiserver-nacos/v2/pb"
 )
 
 // handleServerCheckRequest 客户端首次发起请求，用于向 server 获取当前长连接的 ID 信息

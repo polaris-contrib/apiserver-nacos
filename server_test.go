@@ -20,7 +20,7 @@ package nacosserver_test
 import (
 	"testing"
 
-	_ "github.com/pole-group/polaris-apiserver-nacos"
+	_ "github.com/polaris-contrib/apiserver-nacos"
 )
 
 func TestMain(m *testing.M) {

@@ -1,4 +1,4 @@
-module github.com/pole-group/polaris-apiserver-nacos
+module github.com/polaris-contrib/apiserver-nacos
 
 go 1.19
 

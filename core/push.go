@@ -34,7 +34,7 @@ import (
 	"github.com/polarismesh/polaris/common/utils"
 	"go.uber.org/zap"
 
-	nacosmodel "github.com/pole-group/polaris-apiserver-nacos/model"
+	nacosmodel "github.com/polaris-contrib/apiserver-nacos/model"
 )
 
 type PushType string

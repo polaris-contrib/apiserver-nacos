@@ -20,7 +20,7 @@ package v2
 import (
 	"context"
 
-	nacospb "github.com/pole-group/polaris-apiserver-nacos/v2/pb"
+	nacospb "github.com/polaris-contrib/apiserver-nacos/v2/pb"
 )
 
 // handleHealthCheckRequest 主要用于客户端检查自己和 server 长连接的健康状态

@@ -21,9 +21,9 @@ import (
 	"context"
 	"strings"
 
-	"github.com/pole-group/polaris-apiserver-nacos/model"
-	nacosmodel "github.com/pole-group/polaris-apiserver-nacos/model"
-	nacospb "github.com/pole-group/polaris-apiserver-nacos/v2/pb"
+	"github.com/polaris-contrib/apiserver-nacos/model"
+	nacosmodel "github.com/polaris-contrib/apiserver-nacos/model"
+	nacospb "github.com/polaris-contrib/apiserver-nacos/v2/pb"
 )
 
 func (h *NacosV2Server) handleServiceListRequest(ctx context.Context, req nacospb.BaseRequest,

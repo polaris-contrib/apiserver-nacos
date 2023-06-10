@@ -28,7 +28,7 @@ import (
 	commontime "github.com/polarismesh/polaris/common/time"
 	"go.uber.org/zap"
 
-	"github.com/pole-group/polaris-apiserver-nacos/core"
+	"github.com/polaris-contrib/apiserver-nacos/core"
 )
 
 func NewUDPPushCenter(store *core.NacosDataStorage) (core.PushCenter, error) {

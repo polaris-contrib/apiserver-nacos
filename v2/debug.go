@@ -22,8 +22,8 @@ import (
 
 	"github.com/emicklei/go-restful/v3"
 
-	"github.com/pole-group/polaris-apiserver-nacos/core"
-	v1 "github.com/pole-group/polaris-apiserver-nacos/v1"
+	"github.com/polaris-contrib/apiserver-nacos/core"
+	v1 "github.com/polaris-contrib/apiserver-nacos/v1"
 )
 
 func (n *NacosV2Server) RegistryDebugRoute() {

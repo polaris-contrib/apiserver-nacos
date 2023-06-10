@@ -23,7 +23,7 @@ import (
 
 	"github.com/emicklei/go-restful/v3"
 
-	"github.com/pole-group/polaris-apiserver-nacos/model"
+	"github.com/polaris-contrib/apiserver-nacos/model"
 )
 
 var (

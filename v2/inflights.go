@@ -20,8 +20,8 @@ package v2
 import (
 	"sync"
 
-	nacosmodel "github.com/pole-group/polaris-apiserver-nacos/model"
-	nacospb "github.com/pole-group/polaris-apiserver-nacos/v2/pb"
+	nacosmodel "github.com/polaris-contrib/apiserver-nacos/model"
+	nacospb "github.com/polaris-contrib/apiserver-nacos/v2/pb"
 )
 
 type (

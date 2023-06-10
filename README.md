@@ -1,15 +1,13 @@
-# nacosserver
+# apiserver-nacos
 
 ## 如何使用
 
 #### 构建
 
-执行构建脚本 `build.sh` 即可
-
 ```bash
 # ${nacos_server_plugin_version}: nacosserver 插件版本，默认为 main 的最新 commit
 # ${polaris_server_tag}: 北极星服务端版本信息，默认为 main 分支
-bash build.sh ${nacos_server_plugin_version} ${polaris_server_tag}
+make build ${nacos_server_plugin_version} ${polaris_server_tag}
 ```
 
 #### 配置文件调整

@@ -44,9 +44,9 @@ import (
 	"google.golang.org/grpc/peer"
 	"google.golang.org/grpc/status"
 
-	"github.com/pole-group/polaris-apiserver-nacos/core"
-	v1 "github.com/pole-group/polaris-apiserver-nacos/v1"
-	nacospb "github.com/pole-group/polaris-apiserver-nacos/v2/pb"
+	"github.com/polaris-contrib/apiserver-nacos/core"
+	v1 "github.com/polaris-contrib/apiserver-nacos/v1"
+	nacospb "github.com/polaris-contrib/apiserver-nacos/v2/pb"
 )
 
 func NewNacosV2Server(v1Svr *v1.NacosV1Server, store *core.NacosDataStorage, options ...option) *NacosV2Server {

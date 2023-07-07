@@ -62,6 +62,7 @@ func NewEmptyServiceInfo(name, group string) *ServiceInfo {
 	return &ServiceInfo{
 		Name:      name,
 		GroupName: group,
+		Hosts:     []*Instance{},
 	}
 }
 

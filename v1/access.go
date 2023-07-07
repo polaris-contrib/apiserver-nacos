@@ -85,7 +85,7 @@ func (n *NacosV1Server) ListServices(req *restful.Request, rsp *restful.Response
 	namespace := optional(req, model.ParamNamespaceID, model.DefaultNacosNamespace)
 	namespace = model.ToPolarisNamespace(namespace)
 	groupName := optional(req, model.ParamGroupName, model.DefaultServiceGroup)
-	//selector := optional(req, model.ParamSelector, "")
+	// selector := optional(req, model.ParamSelector, "")
 	serviceList, count := model.HandleServiceListRequest(n.discoverSvr, namespace, groupName, pageNo, pageSize)
 	resp := map[string]interface{}{
 		"count": count,

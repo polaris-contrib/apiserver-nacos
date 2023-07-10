@@ -41,6 +41,10 @@ func (n *NacosV1Server) GetAuthServer() (*restful.WebService, error) {
 	return ws, nil
 }
 
+func (n *NacosV1Server) AddServiceAccess(ws *restful.WebService) {
+	ws.Route(ws.GET("/service/list").To(n.ListServices))
+}
+
 func (n *NacosV1Server) addInstanceAccess(ws *restful.WebService) {
 	ws.Route(ws.POST("/instance").To(n.RegisterInstance))
 	ws.Route(ws.DELETE("/instance").To(n.DeRegisterInstance))
@@ -65,6 +69,29 @@ func (n *NacosV1Server) Login(req *restful.Request, rsp *restful.Response) {
 		return
 	}
 	core.WrirteNacosResponse(data, rsp)
+}
+
+func (n *NacosV1Server) ListServices(req *restful.Request, rsp *restful.Response) {
+	pageNo, err := requiredInt(req, model.ParamPageNo)
+	if err != nil {
+		core.WrirteNacosErrorResponse(err, rsp)
+		return
+	}
+	pageSize, err := requiredInt(req, model.ParamPageSize)
+	if err != nil {
+		core.WrirteNacosErrorResponse(err, rsp)
+		return
+	}
+	namespace := optional(req, model.ParamNamespaceID, model.DefaultNacosNamespace)
+	namespace = model.ToPolarisNamespace(namespace)
+	groupName := optional(req, model.ParamGroupName, model.DefaultServiceGroup)
+	// selector := optional(req, model.ParamSelector, "")
+	serviceList, count := model.HandleServiceListRequest(n.discoverSvr, namespace, groupName, pageNo, pageSize)
+	resp := map[string]interface{}{
+		"count": count,
+		"doms":  serviceList,
+	}
+	core.WrirteNacosResponse(resp, rsp)
 }
 
 func (n *NacosV1Server) RegisterInstance(req *restful.Request, rsp *restful.Response) {

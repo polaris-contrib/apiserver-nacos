@@ -17,6 +17,12 @@
 
 package model
 
+import (
+	"strings"
+
+	"github.com/polarismesh/polaris/service"
+)
+
 type ServiceKey struct {
 	Namespace string
 	Group     string
@@ -28,4 +34,40 @@ type ServiceMetadata struct {
 	Clusters            map[string]struct{}
 	ProtectionThreshold float64
 	ExtendData          map[string]string
+}
+
+func HandleServiceListRequest(discoverSvr service.DiscoverServer, namespace string, groupName string,
+	pageNo int, pageSize int) ([]string, int) {
+	_, services := discoverSvr.Cache().Service().ListServices(namespace)
+	offset := (pageNo - 1) * pageSize
+	limit := pageSize
+	if offset < 0 {
+		offset = 0
+	}
+	if offset > len(services) {
+		return []string{}, 0
+	}
+	groupPrefix := groupName + ReplaceNacosGroupConnectStr
+	if groupName == DefaultServiceGroup {
+		groupPrefix = ""
+	}
+	hasGroupPrefix := len(groupPrefix) != 0
+	temp := make([]string, 0, len(services))
+	for i := range services {
+		svc := services[i]
+		if !hasGroupPrefix {
+			temp = append(temp, svc.Name)
+			continue
+		}
+		if strings.HasPrefix(svc.Name, groupPrefix) {
+			temp = append(temp, GetServiceName(svc.Name))
+		}
+	}
+	var viewList []string
+	if offset+limit > len(services) {
+		viewList = temp[offset:]
+	} else {
+		viewList = temp[offset : offset+limit]
+	}
+	return viewList, len(services)
 }

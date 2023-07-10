@@ -19,7 +19,6 @@ package v2
 
 import (
 	"context"
-	"strings"
 
 	"github.com/polaris-contrib/apiserver-nacos/model"
 	nacosmodel "github.com/polaris-contrib/apiserver-nacos/model"
@@ -43,38 +42,9 @@ func (h *NacosV2Server) handleServiceListRequest(ctx context.Context, req nacosp
 	}
 
 	namespace := nacosmodel.ToPolarisNamespace(svcListReq.Namespace)
-	_, services := h.discoverSvr.Cache().Service().ListServices(namespace)
-	offset := (svcListReq.PageNo - 1) * svcListReq.PageSize
-	limit := svcListReq.PageSize
-	if offset < 0 {
-		offset = 0
-	}
-	if offset > len(services) {
-		return resp, nil
-	}
-	groupPrefix := svcListReq.GroupName + model.ReplaceNacosGroupConnectStr
-	if svcListReq.GroupName == model.DefaultServiceGroup {
-		groupPrefix = ""
-	}
-	hasGroupPrefix := len(groupPrefix) != 0
-	temp := make([]string, 0, len(services))
-	for i := range services {
-		svc := services[i]
-		if !hasGroupPrefix {
-			temp = append(temp, svc.Name)
-			continue
-		}
-		if strings.HasPrefix(svc.Name, groupPrefix) {
-			temp = append(temp, model.GetServiceName(svc.Name))
-		}
-	}
-	var viewList []string
-	if offset+limit > len(services) {
-		viewList = temp[offset:]
-	} else {
-		viewList = temp[offset : offset+limit]
-	}
+	viewList, count := model.HandleServiceListRequest(h.discoverSvr, namespace, svcListReq.GroupName,
+		svcListReq.PageNo, svcListReq.PageSize)
 	resp.ServiceNames = viewList
-	resp.Count = len(temp)
+	resp.Count = count
 	return resp, nil
 }

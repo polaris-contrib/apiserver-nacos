@@ -155,3 +155,15 @@ func required(req *restful.Request, key string) (string, error) {
 	}
 	return val, nil
 }
+
+func requiredInt(req *restful.Request, key string) (int, error) {
+	strValue, err := required(req, key)
+	if err != nil {
+		return 0, err
+	}
+	value, err := strconv.Atoi(strValue)
+	if err != nil {
+		return 0, fmt.Errorf("key: %s is not a number", key)
+	}
+	return value, nil
+}

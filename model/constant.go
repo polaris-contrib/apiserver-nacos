@@ -42,6 +42,9 @@ const (
 	ParamInstanceEnable    = "enable"
 	ParamInstanceMetadata  = "metadata"
 	ParamInstanceBeat      = "beat"
+	ParamPageNo            = "pageNo"
+	ParamPageSize          = "pageSize"
+	ParamSelector          = "selector"
 )
 
 const (

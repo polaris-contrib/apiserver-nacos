@@ -33,7 +33,7 @@ func (h *NacosV2Server) handleServiceListRequest(ctx context.Context, req nacosp
 	}
 	resp := &nacospb.ServiceListResponse{
 		Response: &nacospb.Response{
-			ResultCode: int(model.ErrorCode_Success.Code),
+			ResultCode: int(model.Response_Success.Code),
 			Success:    true,
 			Message:    "success",
 		},

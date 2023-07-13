@@ -96,8 +96,8 @@ func (c *ClientDetectionResponse) GetResponseType() string {
 func NewServerCheckResponse() *ServerCheckResponse {
 	return &ServerCheckResponse{
 		Response: &Response{
-			ResultCode: 0,
-			ErrorCode:  0,
+			ResultCode: int(model.Response_Success.Code),
+			ErrorCode:  int(model.ErrorCode_Success.Code),
 			Success:    true,
 			Message:    "success",
 			RequestId:  "",
@@ -178,8 +178,8 @@ func (c *NotifySubscriberResponse) GetResponseType() string {
 func NewHealthCheckResponse() *HealthCheckResponse {
 	return &HealthCheckResponse{
 		Response: &Response{
-			ResultCode: 0,
-			ErrorCode:  0,
+			ResultCode: int(model.Response_Success.Code),
+			ErrorCode:  int(model.ErrorCode_Success.Code),
 			Success:    true,
 			Message:    "success",
 			RequestId:  "",

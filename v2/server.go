@@ -156,7 +156,7 @@ func (h *NacosV2Server) initHandlers() {
 		nacospb.TypeBatchInstanceRequest: {
 			Handler: h.handleBatchInstanceRequest,
 			PayloadBuilder: func() nacospb.CustomerPayload {
-				return &nacospb.BatchInstanceRequest{}
+				return nacospb.NewBatchInstanceRequest()
 			},
 		},
 		nacospb.TypeServerCheckRequest: {
@@ -174,13 +174,13 @@ func (h *NacosV2Server) initHandlers() {
 		nacospb.TypeSubscribeServiceRequest: {
 			Handler: h.handleSubscribeServiceReques,
 			PayloadBuilder: func() nacospb.CustomerPayload {
-				return &nacospb.SubscribeServiceRequest{}
+				return nacospb.NewSubscribeServiceRequest()
 			},
 		},
 		nacospb.TypeServiceListRequest: {
 			Handler: h.handleServiceListRequest,
 			PayloadBuilder: func() nacospb.CustomerPayload {
-				return &nacospb.ServiceListRequest{}
+				return nacospb.NewServiceListRequest();
 			},
 		},
 		nacospb.TypeServiceQueryRequest: {

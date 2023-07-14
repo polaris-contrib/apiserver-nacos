@@ -96,7 +96,7 @@ func (h *NacosV2Server) sendPushData(sub core.Subscriber, data *core.PushData) e
 	req := &nacospb.NotifySubscriberRequest{
 		NamingRequest: nacospb.NewBasicNamingRequest(utils.NewUUID(), namespace, data.ServiceInfo.Name,
 			data.ServiceInfo.GroupName),
-		ServiceInfo:   data.ServiceInfo,
+		ServiceInfo: data.ServiceInfo,
 	}
 	nacoslog.Info("[NACOS-V2][PushCenter] notify subscriber new service info", zap.String("conn-id", watcher.ConnID),
 		zap.String("req-id", req.RequestId),

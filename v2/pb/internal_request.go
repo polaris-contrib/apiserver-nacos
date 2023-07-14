@@ -30,7 +30,8 @@ type InternalRequest struct {
 // NewInternalRequest .
 func NewInternalRequest() *InternalRequest {
 	request := Request{
-		Headers: make(map[string]string, 8),
+		Headers:   make(map[string]string, 8),
+		RequestId: "",
 	}
 	return &InternalRequest{
 		Request: &request,
@@ -51,7 +52,7 @@ func NewHealthCheckRequest() *HealthCheckRequest {
 }
 
 func (r *HealthCheckRequest) GetRequestType() string {
-	return "HealthCheckRequest"
+	return TypeHealthCheckRequest
 }
 
 // ConnectResetRequest
@@ -61,8 +62,14 @@ type ConnectResetRequest struct {
 	ServerPort string
 }
 
+func NewConnectResetRequest() *ConnectResetRequest {
+	return &ConnectResetRequest{
+		InternalRequest: NewInternalRequest(),
+	}
+}
+
 func (r *ConnectResetRequest) GetRequestType() string {
-	return "ConnectResetRequest"
+	return TypeConnectResetRequest
 }
 
 // ClientDetectionRequest
@@ -77,7 +84,7 @@ func NewClientDetectionRequest() *ClientDetectionRequest {
 }
 
 func (r *ClientDetectionRequest) GetRequestType() string {
-	return "ClientDetectionRequest"
+	return TypeClientDetectionRequest
 }
 
 // ServerCheckRequest
@@ -93,7 +100,7 @@ func NewServerCheckRequest() *ServerCheckRequest {
 }
 
 func (r *ServerCheckRequest) GetRequestType() string {
-	return "ServerCheckRequest"
+	return TypeServerCheckRequest
 }
 
 // ConnectionSetupRequest
@@ -113,5 +120,5 @@ func NewConnectionSetupRequest() *ConnectionSetupRequest {
 }
 
 func (r *ConnectionSetupRequest) GetRequestType() string {
-	return "ConnectionSetupRequest"
+	return TypeConnectionSetupRequest
 }

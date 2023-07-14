@@ -181,7 +181,7 @@ func ReplaceNacosService(service string) string {
 
 func BuildServiceName(svcName, groupName string) string {
 	if groupName == DefaultServiceGroup {
-		groupName = ""
+		return svcName
 	}
 	return groupName + ReplaceNacosGroupConnectStr + svcName
 }

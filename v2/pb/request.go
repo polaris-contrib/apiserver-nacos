@@ -21,64 +21,19 @@ import (
 	"encoding/json"
 )
 
-var (
-	customerPayloadRegistry = map[string]func() BaseRequest{}
-)
-
 const (
-	// TypeConnectionSetupRequest
-	TypeConnectionSetupRequest = "ConnectionSetupRequest"
-	// TypeServerCheckRequest
-	TypeServerCheckRequest = "ServerCheckRequest"
-	// TypeInstanceRequest
-	TypeInstanceRequest = "InstanceRequest"
-	// TypeBatchInstanceRequest
-	TypeBatchInstanceRequest = "BatchInstanceRequest"
+	TypeConnectionSetupRequest  = "ConnectionSetupRequest"
+	TypeConnectResetRequest     = "ConnectResetRequest"
+	TypeClientDetectionRequest  = "ClientDetectionRequest"
+	TypeHealthCheckRequest      = "HealthCheckRequest"
+	TypeServerCheckRequest      = "ServerCheckRequest"
+	TypeInstanceRequest         = "InstanceRequest"
+	TypeBatchInstanceRequest    = "BatchInstanceRequest"
+	TypeNotifySubscriberRequest = "NotifySubscriberRequest"
+	TypeSubscribeServiceRequest = "SubscribeServiceRequest"
+	TypeServiceListRequest      = "ServiceListRequest"
+	TypeServiceQueryRequest     = "ServiceQueryRequest"
 )
-
-func init() {
-	// system
-	registryCustomerPayload(func() BaseRequest {
-		return &ConnectionSetupRequest{}
-	})
-	registryCustomerPayload(func() BaseRequest {
-		return &ConnectResetRequest{}
-	})
-	registryCustomerPayload(func() BaseRequest {
-		return &ServerCheckRequest{}
-	})
-	registryCustomerPayload(func() BaseRequest {
-		return &ClientDetectionRequest{}
-	})
-	registryCustomerPayload(func() BaseRequest {
-		return &HealthCheckRequest{}
-	})
-
-	// discovery
-	registryCustomerPayload(func() BaseRequest {
-		return &InstanceRequest{}
-	})
-	registryCustomerPayload(func() BaseRequest {
-		return &BatchInstanceRequest{}
-	})
-	registryCustomerPayload(func() BaseRequest {
-		return &NotifySubscriberRequest{}
-	})
-	registryCustomerPayload(func() BaseRequest {
-		return &SubscribeServiceRequest{}
-	})
-	registryCustomerPayload(func() BaseRequest {
-		return &ServiceListRequest{}
-	})
-	registryCustomerPayload(func() BaseRequest {
-		return &ServiceQueryRequest{}
-	})
-}
-
-func registryCustomerPayload(builder func() BaseRequest) {
-	example := builder()
-	customerPayloadRegistry[example.GetRequestType()] = builder
-}
 
 // CustomerPayload
 type CustomerPayload interface{}
@@ -108,6 +63,9 @@ type BaseRequest interface {
 }
 
 func (r *Request) PutAllHeaders(headers map[string]string) {
+	if r.Headers == nil {
+		r.Headers = make(map[string]string)
+	}
 	for k, v := range headers {
 		r.Headers[k] = v
 	}
@@ -118,8 +76,8 @@ func (r *Request) ClearHeaders() {
 }
 
 func (r *Request) GetHeaders() map[string]string {
-	if len(r.Headers) == 0 {
-		return map[string]string{}
+	if r.Headers == nil {
+		r.Headers = make(map[string]string)
 	}
 	return r.Headers
 }

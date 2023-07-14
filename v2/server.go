@@ -147,54 +147,60 @@ func (h *NacosV2Server) Initialize(ctx context.Context, option map[string]interf
 func (h *NacosV2Server) initHandlers() {
 	h.handleRegistry = map[string]*RequestHandlerWarrper{
 		// Request
-		(&nacospb.InstanceRequest{}).GetRequestType(): {
+		nacospb.TypeInstanceRequest: {
 			Handler: h.handleInstanceRequest,
 			PayloadBuilder: func() nacospb.CustomerPayload {
-				return &nacospb.InstanceRequest{}
+				return nacospb.NewInstanceRequest()
 			},
 		},
-		(&nacospb.BatchInstanceRequest{}).GetRequestType(): {
+		nacospb.TypeBatchInstanceRequest: {
 			Handler: h.handleBatchInstanceRequest,
 			PayloadBuilder: func() nacospb.CustomerPayload {
-				return &nacospb.BatchInstanceRequest{}
+				return nacospb.NewBatchInstanceRequest()
 			},
 		},
-		(&nacospb.ServerCheckRequest{}).GetRequestType(): {
+		nacospb.TypeServerCheckRequest: {
 			Handler: h.handleServerCheckRequest,
 			PayloadBuilder: func() nacospb.CustomerPayload {
 				return nacospb.NewServerCheckRequest()
 			},
 		},
-		(&nacospb.HealthCheckRequest{}).GetRequestType(): {
+		nacospb.TypeHealthCheckRequest: {
 			Handler: h.handleHealthCheckRequest,
 			PayloadBuilder: func() nacospb.CustomerPayload {
 				return nacospb.NewHealthCheckRequest()
 			},
 		},
-		(&nacospb.SubscribeServiceRequest{}).GetRequestType(): {
+		nacospb.TypeSubscribeServiceRequest: {
 			Handler: h.handleSubscribeServiceReques,
 			PayloadBuilder: func() nacospb.CustomerPayload {
-				return &nacospb.SubscribeServiceRequest{}
+				return nacospb.NewSubscribeServiceRequest()
 			},
 		},
-		(&nacospb.ServiceListRequest{}).GetRequestType(): {
+		nacospb.TypeServiceListRequest: {
 			Handler: h.handleServiceListRequest,
 			PayloadBuilder: func() nacospb.CustomerPayload {
-				return &nacospb.ServiceListRequest{}
+				return nacospb.NewServiceListRequest()
+			},
+		},
+		nacospb.TypeServiceQueryRequest: {
+			Handler: h.handleServiceQueryRequest,
+			PayloadBuilder: func() nacospb.CustomerPayload {
+				return nacospb.NewServiceQueryRequest()
 			},
 		},
 		// RequestBiStream
-		(&nacospb.ConnectionSetupRequest{}).GetRequestType(): {
+		nacospb.TypeConnectionSetupRequest: {
 			PayloadBuilder: func() nacospb.CustomerPayload {
 				return nacospb.NewConnectionSetupRequest()
 			},
 		},
-		(&nacospb.SubscribeServiceResponse{}).GetResponseType(): {
+		nacospb.TypeSubscribeServiceResponse: {
 			PayloadBuilder: func() nacospb.CustomerPayload {
 				return &nacospb.SubscribeServiceResponse{}
 			},
 		},
-		(&nacospb.NotifySubscriberResponse{}).GetResponseType(): {
+		nacospb.TypeNotifySubscriberResponse: {
 			PayloadBuilder: func() nacospb.CustomerPayload {
 				return &nacospb.NotifySubscriberResponse{}
 			},

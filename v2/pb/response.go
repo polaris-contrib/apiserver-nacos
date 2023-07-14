@@ -23,6 +23,20 @@ import (
 	"github.com/polaris-contrib/apiserver-nacos/model"
 )
 
+const (
+	TypeConnectResetResponse     = "ConnectResetResponse"
+	TypeClientDetectionResponse  = "ClientDetectionResponse"
+	TypeServerCheckResponse      = "ServerCheckResponse"
+	TypeInstanceResponse         = "InstanceResponse"
+	TypeBatchInstanceResponse    = "BatchInstanceResponse"
+	TypeQueryServiceResponse     = "QueryServiceResponse"
+	TypeSubscribeServiceResponse = "SubscribeServiceResponse"
+	TypeServiceListResponse      = "ServiceListResponse"
+	TypeNotifySubscriberResponse = "NotifySubscriberResponse"
+	TypeHealthCheckResponse      = "HealthCheckResponse"
+	TypeErrorResponse            = "ErrorResponse"
+)
+
 // BaseResponse
 type BaseResponse interface {
 	GetResponseType() string
@@ -113,7 +127,7 @@ type ServerCheckResponse struct {
 }
 
 func (c *ServerCheckResponse) GetResponseType() string {
-	return "ServerCheckResponse"
+	return TypeServerCheckResponse
 }
 
 // InstanceResponse
@@ -122,7 +136,7 @@ type InstanceResponse struct {
 }
 
 func (c *InstanceResponse) GetResponseType() string {
-	return "InstanceResponse"
+	return TypeInstanceResponse
 }
 
 // BatchInstanceResponse
@@ -131,7 +145,7 @@ type BatchInstanceResponse struct {
 }
 
 func (c *BatchInstanceResponse) GetResponseType() string {
-	return "BatchInstanceResponse"
+	return TypeBatchInstanceResponse
 }
 
 // QueryServiceResponse
@@ -141,7 +155,7 @@ type QueryServiceResponse struct {
 }
 
 func (c *QueryServiceResponse) GetResponseType() string {
-	return "QueryServiceResponse"
+	return TypeQueryServiceResponse
 }
 
 // SubscribeServiceResponse
@@ -151,7 +165,7 @@ type SubscribeServiceResponse struct {
 }
 
 func (c *SubscribeServiceResponse) GetResponseType() string {
-	return "SubscribeServiceResponse"
+	return TypeSubscribeServiceResponse
 }
 
 // ServiceListResponse
@@ -162,7 +176,7 @@ type ServiceListResponse struct {
 }
 
 func (c *ServiceListResponse) GetResponseType() string {
-	return "ServiceListResponse"
+	return TypeServiceListResponse
 }
 
 // NotifySubscriberResponse
@@ -171,7 +185,7 @@ type NotifySubscriberResponse struct {
 }
 
 func (c *NotifySubscriberResponse) GetResponseType() string {
-	return "NotifySubscriberResponse"
+	return TypeNotifySubscriberResponse
 }
 
 // NewHealthCheckResponse
@@ -193,7 +207,7 @@ type HealthCheckResponse struct {
 }
 
 func (c *HealthCheckResponse) GetResponseType() string {
-	return "HealthCheckResponse"
+	return TypeHealthCheckResponse
 }
 
 // ErrorResponse
@@ -202,5 +216,5 @@ type ErrorResponse struct {
 }
 
 func (c *ErrorResponse) GetResponseType() string {
-	return "ErrorResponse"
+	return TypeErrorResponse
 }

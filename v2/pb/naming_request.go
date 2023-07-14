@@ -35,12 +35,27 @@ type NamingRequest struct {
 }
 
 // NewNamingRequest
-func NewNamingRequest(namespace, serviceName, groupName string) *NamingRequest {
-	request := Request{
-		Headers: make(map[string]string, 8),
+func NewNamingRequest() *NamingRequest {
+	request := &Request{
+		Headers:   make(map[string]string, 8),
+		RequestId: "",
 	}
 	return &NamingRequest{
-		Request:     &request,
+		Request:     request,
+		Namespace:   model.DefaultNacosNamespace,
+		ServiceName: "",
+		GroupName:   model.DefaultServiceGroup,
+		Module:      "naming",
+	}
+}
+
+func NewBasicNamingRequest(requestId, namespace, serviceName, groupName string) *NamingRequest {
+	request := &Request{
+		Headers:   make(map[string]string, 8),
+		RequestId: requestId,
+	}
+	return &NamingRequest{
+		Request:     request,
 		Namespace:   namespace,
 		ServiceName: serviceName,
 		GroupName:   groupName,
@@ -64,17 +79,16 @@ type InstanceRequest struct {
 }
 
 // NewInstanceRequest
-func NewInstanceRequest(namespace, serviceName, groupName, reqType string,
-	instance model.Instance) *InstanceRequest {
+func NewInstanceRequest() *InstanceRequest {
 	return &InstanceRequest{
-		NamingRequest: NewNamingRequest(namespace, serviceName, groupName),
-		Type:          reqType,
-		Instance:      instance,
+		NamingRequest: NewNamingRequest(),
+		Type:          TypeInstanceRequest,
+		Instance:      model.Instance{},
 	}
 }
 
 func (r *InstanceRequest) GetRequestType() string {
-	return "InstanceRequest"
+	return TypeInstanceRequest
 }
 
 // BatchInstanceRequest .
@@ -84,8 +98,16 @@ type BatchInstanceRequest struct {
 	Instances []*model.Instance `json:"instances"`
 }
 
+func NewBatchInstanceRequest() *BatchInstanceRequest {
+	return &BatchInstanceRequest{
+		NamingRequest: NewNamingRequest(),
+		Type:          TypeBatchInstanceRequest,
+		Instances:     make([]*model.Instance, 0),
+	}
+}
+
 func (r *BatchInstanceRequest) GetRequestType() string {
-	return "BatchInstanceRequest"
+	return TypeBatchInstanceRequest
 }
 
 func (r *BatchInstanceRequest) Normalize() {
@@ -103,8 +125,15 @@ type NotifySubscriberRequest struct {
 	ServiceInfo *model.ServiceInfo `json:"serviceInfo"`
 }
 
+func NewNotifySubscriberRequest() *NotifySubscriberRequest {
+	return &NotifySubscriberRequest{
+		NamingRequest: NewNamingRequest(),
+		ServiceInfo:   &model.ServiceInfo{},
+	}
+}
+
 func (r *NotifySubscriberRequest) GetRequestType() string {
-	return "NotifySubscriberRequest"
+	return TypeNotifySubscriberRequest
 }
 
 // SubscribeServiceRequest
@@ -115,17 +144,16 @@ type SubscribeServiceRequest struct {
 }
 
 // NewSubscribeServiceRequest .
-func NewSubscribeServiceRequest(namespace, serviceName, groupName, clusters string,
-	subscribe bool) *SubscribeServiceRequest {
+func NewSubscribeServiceRequest() *SubscribeServiceRequest {
 	return &SubscribeServiceRequest{
-		NamingRequest: NewNamingRequest(namespace, serviceName, groupName),
-		Subscribe:     subscribe,
-		Clusters:      clusters,
+		NamingRequest: NewNamingRequest(),
+		Subscribe:     true,
+		Clusters:      "",
 	}
 }
 
 func (r *SubscribeServiceRequest) GetRequestType() string {
-	return "SubscribeServiceRequest"
+	return TypeSubscribeServiceRequest
 }
 
 // ServiceListRequest
@@ -137,18 +165,17 @@ type ServiceListRequest struct {
 }
 
 // NewServiceListRequest .
-func NewServiceListRequest(namespace, serviceName, groupName string, pageNo,
-	pageSize int, selector string) *ServiceListRequest {
+func NewServiceListRequest() *ServiceListRequest {
 	return &ServiceListRequest{
-		NamingRequest: NewNamingRequest(namespace, serviceName, groupName),
-		PageNo:        pageNo,
-		PageSize:      pageSize,
-		Selector:      selector,
+		NamingRequest: NewNamingRequest(),
+		PageNo:        0,
+		PageSize:      10,
+		Selector:      "",
 	}
 }
 
 func (r *ServiceListRequest) GetRequestType() string {
-	return "ServiceListRequest"
+	return TypeServiceListRequest
 }
 
 // ServiceQueryRequest
@@ -160,16 +187,15 @@ type ServiceQueryRequest struct {
 }
 
 // NewServiceQueryRequest .
-func NewServiceQueryRequest(namespace, serviceName, groupName, cluster string, healthyOnly bool,
-	udpPort int) *ServiceQueryRequest {
+func NewServiceQueryRequest() *ServiceQueryRequest {
 	return &ServiceQueryRequest{
-		NamingRequest: NewNamingRequest(namespace, serviceName, groupName),
-		Cluster:       cluster,
-		HealthyOnly:   healthyOnly,
-		UdpPort:       udpPort,
+		NamingRequest: NewNamingRequest(),
+		Cluster:       "",
+		HealthyOnly:   false,
+		UdpPort:       0,
 	}
 }
 
 func (r *ServiceQueryRequest) GetRequestType() string {
-	return "ServiceQueryRequest"
+	return TypeServiceQueryRequest
 }

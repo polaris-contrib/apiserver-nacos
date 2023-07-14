@@ -180,7 +180,7 @@ func (h *NacosV2Server) initHandlers() {
 		nacospb.TypeServiceListRequest: {
 			Handler: h.handleServiceListRequest,
 			PayloadBuilder: func() nacospb.CustomerPayload {
-				return nacospb.NewServiceListRequest();
+				return nacospb.NewServiceListRequest()
 			},
 		},
 		nacospb.TypeServiceQueryRequest: {

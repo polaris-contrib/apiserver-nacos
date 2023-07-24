@@ -47,6 +47,7 @@ func (n *NacosV1Server) AddServiceAccess(ws *restful.WebService) {
 
 func (n *NacosV1Server) addInstanceAccess(ws *restful.WebService) {
 	ws.Route(ws.POST("/instance").To(n.RegisterInstance))
+	ws.Route(ws.PUT("/instance").To(n.UpdateInstance))
 	ws.Route(ws.DELETE("/instance").To(n.DeRegisterInstance))
 	ws.Route(ws.PUT("/instance/beat").To(n.Heartbeat))
 	ws.Route(ws.GET("/instance/list").To(n.ListInstances))
@@ -110,6 +111,28 @@ func (n *NacosV1Server) RegisterInstance(req *restful.Request, rsp *restful.Resp
 
 	ctx := handler.ParseHeaderContext()
 	if err := n.handleRegister(ctx, namespace, ins.ServiceName, ins); err != nil {
+		core.WrirteNacosErrorResponse(err, rsp)
+		return
+	}
+	core.WrirteSimpleResponse("ok", http.StatusOK, rsp)
+}
+
+func (n *NacosV1Server) UpdateInstance(req *restful.Request, rsp *restful.Response) {
+	handler := Handler{
+		Request:  req,
+		Response: rsp,
+	}
+
+	namespace := optional(req, model.ParamNamespaceID, model.DefaultNacosNamespace)
+	namespace = model.ToPolarisNamespace(namespace)
+	ins, err := BuildInstance(namespace, req)
+	if err != nil {
+		core.WrirteNacosErrorResponse(err, rsp)
+		return
+	}
+
+	ctx := handler.ParseHeaderContext()
+	if err := n.handleUpdate(ctx, namespace, ins.ServiceName, ins); err != nil {
 		core.WrirteNacosErrorResponse(err, rsp)
 		return
 	}

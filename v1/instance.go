@@ -43,6 +43,18 @@ func (n *NacosV1Server) handleRegister(ctx context.Context, namespace, serviceNa
 	return nil
 }
 
+func (n *NacosV1Server) handleUpdate(ctx context.Context, namespace, serviceName string, ins *model.Instance) error {
+	specIns := model.PrepareSpecInstance(namespace, serviceName, ins)
+	resp := n.discoverSvr.UpdateInstance(ctx, specIns)
+	if apimodel.Code(resp.GetCode().GetValue()) != apimodel.Code_ExecuteSuccess {
+		return &model.NacosError{
+			ErrCode: int32(model.ExceptionCode_ServerError),
+			ErrMsg:  resp.GetInfo().GetValue(),
+		}
+	}
+	return nil
+}
+
 func (n *NacosV1Server) handleDeregister(ctx context.Context, namespace, service string, ins *model.Instance) error {
 	specIns := model.PrepareSpecInstance(namespace, service, ins)
 	resp := n.discoverSvr.DeregisterInstance(ctx, specIns)

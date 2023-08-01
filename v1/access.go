@@ -192,7 +192,7 @@ func (n *NacosV1Server) ListInstances(req *restful.Request, rsp *restful.Respons
 	params := ParseQueryParams(req)
 
 	params[model.ParamNamespaceID] = model.ToPolarisNamespace(params[model.ParamNamespaceID])
-	data, err := n.handleQueryInstances(ctx, ParseQueryParams(req))
+	data, err := n.handleQueryInstances(ctx, params)
 	if err != nil {
 		core.WrirteNacosErrorResponse(err, rsp)
 		return

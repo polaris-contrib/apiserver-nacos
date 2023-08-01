@@ -19,7 +19,9 @@ package v2
 
 import (
 	"context"
+	"strings"
 
+	"github.com/polaris-contrib/apiserver-nacos/core"
 	"github.com/polaris-contrib/apiserver-nacos/model"
 	nacospb "github.com/polaris-contrib/apiserver-nacos/v2/pb"
 )
@@ -36,25 +38,25 @@ func (h *NacosV2Server) handleServiceQueryRequest(ctx context.Context, req nacos
 			Success:    true,
 			Message:    "success",
 		},
-		ServiceInfo: model.Service{
-			Name:      svcQueryReq.ServiceName,
-			GroupName: svcQueryReq.GroupName,
-			Hosts:     make([]model.Instance, 0),
-		},
 	}
 	namespace := model.ToPolarisNamespace(svcQueryReq.Namespace)
-	svc := h.discoverSvr.Cache().Service().GetServiceByName(svcQueryReq.ServiceName, namespace)
-	if svc == nil {
-		return resp, nil
+	filterCtx := &core.FilterContext{
+		Service:     core.ToNacosService(h.discoverSvr.Cache(), namespace, svcQueryReq.ServiceName, svcQueryReq.GroupName),
+		Clusters:    strings.Split(svcQueryReq.Cluster, ","),
+		EnableOnly:  true,
+		HealthyOnly: svcQueryReq.HealthyOnly,
 	}
-	insts := h.discoverSvr.Cache().Instance().GetInstancesByServiceID(svc.ID)
-	if insts == nil {
-		return resp, nil
-	}
-	for _, inst := range insts {
-		ins := model.Instance{}
-		ins.FromSpecInstance(inst)
-		resp.ServiceInfo.Hosts = append(resp.ServiceInfo.Hosts, ins)
+	// 默认只下发 enable 的实例
+	result := h.store.ListInstances(filterCtx, core.SelectInstancesWithHealthyProtection)
+	resp.ServiceInfo = model.Service{
+		Name:                     svcQueryReq.ServiceName,
+		GroupName:                svcQueryReq.GroupName,
+		Clusters:                 result.Clusters,
+		CacheMillis:              result.CacheMillis,
+		Hosts:                    result.Hosts,
+		Checksum:                 result.Checksum,
+		LastRefTime:              result.LastRefTime,
+		ReachProtectionThreshold: result.ReachProtectionThreshold,
 	}
 	return resp, nil
 }

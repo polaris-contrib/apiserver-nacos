@@ -27,16 +27,16 @@ import (
 )
 
 type Service struct {
-	CacheMillis              uint64     `json:"cacheMillis"`
-	Hosts                    []Instance `json:"hosts"`
-	Checksum                 string     `json:"checksum"`
-	LastRefTime              uint64     `json:"lastRefTime"`
-	Clusters                 string     `json:"clusters"`
-	Name                     string     `json:"name"`
-	GroupName                string     `json:"groupName"`
-	Valid                    bool       `json:"valid"`
-	AllIPs                   bool       `json:"allIPs"`
-	ReachProtectionThreshold bool       `json:"reachProtectionThreshold"`
+	CacheMillis              int64       `json:"cacheMillis"`
+	Hosts                    []*Instance `json:"hosts"`
+	Checksum                 string      `json:"checksum"`
+	LastRefTime              int64       `json:"lastRefTime"`
+	Clusters                 string      `json:"clusters"`
+	Name                     string      `json:"name"`
+	GroupName                string      `json:"groupName"`
+	Valid                    bool        `json:"valid"`
+	AllIPs                   bool        `json:"allIPs"`
+	ReachProtectionThreshold bool        `json:"reachProtectionThreshold"`
 }
 
 type SimpleServiceInfo struct {

@@ -287,7 +287,7 @@ func NoopSelectInstances(ctx *FilterContext, result *nacosmodel.ServiceInfo,
 func SelectInstancesWithHealthyProtection(ctx *FilterContext, result *nacosmodel.ServiceInfo,
 	instances []*nacosmodel.Instance, healthCount int32) *nacosmodel.ServiceInfo {
 	protectThreshold := ctx.Service.ProtectionThreshold
-	if len(instances) > 0 && float64(healthCount)/float64(len(instances)) <= protectThreshold {
+	if len(instances) > 0 && float64(healthCount)/float64(len(instances)) >= protectThreshold {
 		ret := instances
 		if ctx.HealthyOnly {
 			healthyIns := make([]*nacosmodel.Instance, 0, len(instances))
